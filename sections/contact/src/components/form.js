@@ -7,7 +7,8 @@ const INITIAL_STATE = {
   name: '',
   email: '',
   subject: '',
-  body: ''
+  body: '',
+  status: 'IDLE'
 }
 //standard way to set up action is to set up type
 // {type: 'dostuff', name: 'Saia'}
@@ -15,6 +16,9 @@ const reducer = (state, action) => {
   switch(action.type) {
     case 'updateFieldValue':
       return { ...state, [action.field]: action.value};
+    case 'updateStatus':
+      return {...state, status: action.status };
+    case 'reset':
     default:
       return INITIAL_STATE;
   }
@@ -24,7 +28,7 @@ const Form = () => {
   //state is the INITIAL STATE or whatever gets returned from reducer
   const [state, dispatch] = useReducer(reducer, INITIAL_STATE);
 
-  console.log({ state });
+  const setStatus = status => dispatch({ type: 'updateStatus', status });
 
   const updateFieldValue = field => event => {
     dispatch({
@@ -37,13 +41,38 @@ const Form = () => {
   const handleSubmit = event => {
     // so it doesn't reload page
     event.preventDefault();
-
+    setStatus('PENDING')
     //now we've opted in to that responsibility that we need to handle now
     //TODO actually send the message
-    console.log(state)
+    fetch('/api/contact', {
+      method: 'POST',
+      body: JSON.stringify(state)
+    })
+      .then(response => response.json())
+      .then(response => {
+        console.log(response);
+        setStatus('SUCCESS');
+      })
+      .catch(error => {
+        console.error(error);
+        setStatus('ERROR')
+      })
+  }
+
+  if(state.status === 'SUCCESS') {
+    return (
+      <p className={styles.success}>
+        Message was sent
+        <button type='reset' onClick={() => dispatch({type: 'reset'})} className={`${styles.button} ${styles.centered}`}>Reset</button>
+      </p>
+    )
   }
   return (
-    <form className={styles.form} onSubmit={handleSubmit}>
+    <>
+    {state.status === 'ERROR' && (
+      <p className={styles.error}>Something went wrong. Please try again.</p>
+    )}
+    <form className={`${styles.form} ${state.status === 'PENDING' && styles.pending}`} onSubmit={handleSubmit}>
       <label className={styles.label}>
         Name
         <input className={styles.input} type="text" name="name" value={state.name} onChange={updateFieldValue('name')} /> 
@@ -62,6 +91,7 @@ const Form = () => {
       </label>
       <button className={styles.button}>Send</button>
     </form>
+    </>
   )
 }
 

@@ -1,0 +1,44 @@
+.form {
+  border: 1px solid #ddd;
+  /* REM unit is relative to whatever size we set on HTML. We set it to 18px. If we change it to 20px, everything will proportionately adjust. It’s a nice feature to have so if the design system changes and everybody mandates 16px. We don’t want to have to go in and redo all the math on what the margins and spacing and padding should be, we can just make it relative to the font size. It will look good at whatever pixel size. */
+  border-radius: 0.25rem;
+  display: block;
+  margin: 0.75rem auto 0;
+  max-width: 500px;
+  padding: 1rem;
+}
+
+.label,
+.input {
+  /* makes it look formish */
+  display: block;
+}
+
+.label {
+  font-size: 0.75rem;
+  /* making it relative to itself */
+  letter-spacing: 0.1em;
+  /* looks labely to me with uppercase */
+  text-transform: uppercase;
+}
+
+.input {
+  border: 1px solid #ddd;
+  border-radius: 0.25rem;
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+  padding: 0.25rem;
+  width: 100%;
+}
+
+.button {
+  background: darkblue;
+  border: 1px solid darkblue;
+  border-radius: 0.25rem;
+  color: white;
+  /* buttons by deafult don't get that clicky thing, so we need to set that */
+  cursor: pointer;
+  /* make it block so it doesn't wrap around anything */
+  display: block;
+  font-size: 1.25rem;
+}
